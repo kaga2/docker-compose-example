@@ -1,0 +1,4 @@
+[submodule "example-api"]
+	path = example-api
+	url = https://github.com/kaga2/example-api.git
+       branch = master
