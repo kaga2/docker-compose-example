@@ -1,0 +1,49 @@
+version: "3.7"
+services:
+
+  db_example:
+    image: postgres:9.6
+    container_name: 'example-database'
+    volumes:
+      - db-example-data:/var/lib/postgresql/data
+      - ./example-api/entrypoints/db.sh:/docker-entrypoint-initdb.d/db.sh
+    env_file:
+      - env/pg-variables.env
+    networks:
+      - backend
+
+  example_api:
+    build: ./example-api
+    entrypoint: example-api/entrypoints/api.sh
+    image: example-api
+    container_name: 'example-api'
+    stdin_open: true
+    tty: true
+    env_file:
+      - env/example-variables.env
+    networks:
+      - backend
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db_example
+    volumes:
+      - ./:/example-api
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: 'pgadmin4'
+    env_file:
+      - env/pgadmin-variables.env
+    networks:
+      - backend
+    stdin_open: true
+    tty: true
+    ports:
+      - '80:80'
+
+networks:
+  backend:
+
+volumes:
+  db-example-data:
